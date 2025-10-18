@@ -19,15 +19,15 @@ enum DebugLevel {
 macro_rules! debug_print {
     ($l:expr,$($fmt:tt)*) => {
         match $l {
-            DebugLevel::INFO => println!("[{}]: {}","I".grey(),format!($($fmt)*)),
-            DebugLevel::WARN => println!("[{}]: {}","W".yellow_bold(),format!($($fmt)*)),
-            DebugLevel::ERROR => println!("[{}]: {}","E".red_bold(),format!($($fmt)*)),
+            DebugLevel::INFO => println!("[{}]: {}","i".grey(),format!($($fmt)*)),
+            DebugLevel::WARN => println!("[{}]: {}","w".yellow_bold(),format!($($fmt)*)),
+            DebugLevel::ERROR => println!("[{}]: {}","e".red_bold(),format!($($fmt)*)),
         }
     };
 }
 
 fn run_cmd(cmd: &str) -> anyhow::Result<String> {
-    debug_print!(DebugLevel::INFO, "running command '{}'", cmd.green());
+    debug_print!(DebugLevel::INFO, "Running command '{}'", cmd.green());
 
     let out = Command::new("sh").arg("-c").arg(cmd).output()?;
 
@@ -35,7 +35,7 @@ fn run_cmd(cmd: &str) -> anyhow::Result<String> {
         let out = String::from_utf8_lossy(&out.stdout);
         return Ok(out.to_string());
     } else {
-        debug_print!(DebugLevel::ERROR, "command Failed");
+        debug_print!(DebugLevel::ERROR, "Command Failed");
 
         let out = String::from_utf8_lossy(&out.stderr);
 
@@ -92,7 +92,7 @@ fn setup_header(pn: &str) -> anyhow::Result<()> {
 }
 
 fn setup_main(pn: &str) -> anyhow::Result<()> {
-    debug_print!(DebugLevel::INFO, "writing to '{pn}.c'");
+    debug_print!(DebugLevel::INFO, "Writing to '{pn}.c'");
 
     let file_path = format!("./{pn}/{pn}.c");
 
@@ -102,7 +102,7 @@ fn setup_main(pn: &str) -> anyhow::Result<()> {
 #include "essentials.h"
 
 int main(void) {{
-    printf("Hello,World\n");
+    println("Hello,World");
 
     return 0;
 }}"#
@@ -117,8 +117,9 @@ int main(void) {{
 fn test_run(pn: &str) -> anyhow::Result<()> {
     let out = run_cmd(&format!("make --no-print-directory  -C ./{pn} run"))?;
 
+    println!("--------------------------------------------------");
     print!("{out}");
-
+    println!("--------------------------------------------------");
     Ok(())
 }
 
@@ -137,7 +138,7 @@ fn parse_args() -> String {
 fn main() -> anyhow::Result<()> {
     let project_name = parse_args();
 
-    if project_name.len() > 15 {
+    if project_name.len() > 25 {
         debug_print!(DebugLevel::ERROR, "Project name is too long");
         exit(1);
     }
