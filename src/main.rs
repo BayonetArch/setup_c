@@ -20,8 +20,8 @@ macro_rules! debug_print {
     ($l:expr,$($fmt:tt)*) => {
         match $l {
             DebugLevel::INFO => println!("[{}]: {}","i".grey(),format!($($fmt)*)),
-            DebugLevel::WARN => println!("[{}]: {}","w".yellow_bold(),format!($($fmt)*)),
-            DebugLevel::ERROR => println!("[{}]: {}","e".red_bold(),format!($($fmt)*)),
+            DebugLevel::WARN => eprintln!("[{}]: {}","w".yellow_bold(),format!($($fmt)*)),
+            DebugLevel::ERROR => eprintln!("[{}]: {}","e".red_bold(),format!($($fmt)*)),
         }
     };
 }
@@ -55,7 +55,7 @@ fn setup_makefile(pn: &str) -> anyhow::Result<()> {
 CFLAGS = -Wall -Wextra -ggdb
 SOURCE = {pn}.c
 TARGET = ./build/{pn}
-HEADER = essentials.h
+HEADER = essen.h
 
 all: $(TARGET)
 
@@ -83,9 +83,9 @@ run: $(TARGET)
 
 fn setup_header(pn: &str) -> anyhow::Result<()> {
     let header_link =
-        r"https://raw.githubusercontent.com/BayonetArch/essen.h/refs/heads/master/essentials.h";
+        r"https://raw.githubusercontent.com/BayonetArch/essen.h/refs/heads/master/essen.h";
 
-    let cmd = format!("wget {header_link} -O ./{pn}/essentials.h");
+    let cmd = format!("wget {header_link} -O ./{pn}/essen.h");
     run_cmd(&cmd)?;
 
     Ok(())
@@ -99,7 +99,7 @@ fn setup_main(pn: &str) -> anyhow::Result<()> {
     let file_contents = format!(
         r#"/* {pn}.c */
 
-#include "essentials.h"
+#include "essen.h"
 
 int main(void) {{
     println("Hello,World");

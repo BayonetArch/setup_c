@@ -1,5 +1,6 @@
 use std::fmt;
 
+///  type to display terminal attributes
 pub struct AttrDisplay {
     attr: String,
     val: String,
@@ -7,14 +8,17 @@ pub struct AttrDisplay {
 
 #[allow(dead_code)]
 impl AttrDisplay {
+    /// convert AttrDisplay to string
     pub fn to_string(&self) -> String {
         format!("{}{}{}", self.attr, self.val, Self::none())
     }
 
+    /// clear current line
     pub fn clear_line() -> String {
         "\x1b[033[2k\r".to_string()
     }
 
+    /// clear screen and move cursor to top
     pub fn clear_screen() -> String {
         "\x1b[2J\x1b[H".to_string()
     }
@@ -30,6 +34,7 @@ impl fmt::Display for AttrDisplay {
     }
 }
 
+/// different terminal attributes
 #[allow(dead_code)]
 pub trait Attrs {
     fn set_attr(attr: &str, v: &str) -> AttrDisplay;
