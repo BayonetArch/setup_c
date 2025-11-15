@@ -35,7 +35,7 @@ fn setup_makefile(pn: &str) -> anyhow::Result<()> {
 CFLAGS = -Wall -Wextra -ggdb
 SOURCE = {pn}.c
 TARGET = build/{pn}
-HEADER = essen.h
+HEADER = include/essen.h
 
 all: $(TARGET)
 
@@ -45,7 +45,7 @@ $(TARGET): $(SOURCE) $(HEADER)
 clean:
 	rm -f $(TARGET)
 
-.PHONY: run
+.PHONY: run all clean
 
 run: $(TARGET)
 	./$(TARGET)
@@ -65,7 +65,7 @@ fn setup_header(pn: &str) -> anyhow::Result<()> {
     let header_link =
         r"https://raw.githubusercontent.com/BayonetArch/essen.h/refs/heads/master/essen.h";
 
-    let cmd = format!("wget {header_link} -O ./{pn}/essen.h");
+    let cmd = format!("wget {header_link} -O ./{pn}/include/essen.h");
     run_cmd(&cmd)?;
 
     Ok(())
@@ -79,7 +79,7 @@ fn setup_main(pn: &str) -> anyhow::Result<()> {
     let file_contents = format!(
         r#"/* {pn}.c */
 
-#include "essen.h"
+#include "include/essen.h"
 
 int main(void) {{
     println("Hello,World");
@@ -107,8 +107,8 @@ fn parse_args() -> String {
     let argv: Vec<_> = env::args().collect();
 
     if argv.len() != 2 {
-        eprintln!("{}: no arguments provided", "err".red());
-        eprintln!("usage: {} <project_name>", &argv[0]);
+        eprintln!("{}: No arguments provided", "Error".red());
+        eprintln!("Usage: {} <project_name>", &argv[0]);
         exit(1);
     }
     let out = &argv[1];
@@ -122,17 +122,19 @@ fn main() -> anyhow::Result<()> {
         debug_println!(LogLevel::ERROR, "Project name is too long");
         exit(1);
     }
-    debug_print!(LogLevel::INFO, "Proceed (Y/n)?: ");
+    debug_print!(LogLevel::INFO, "Proceed [Y/n]?: ");
     stdout().flush()?;
     let mut buf = String::new();
 
     io::stdin().read_line(&mut buf)?;
+    let buf = buf.trim().to_lowercase();
 
-    if !buf.contains(|x| x == 'Y' || x == 'y' || x == '\n') {
+    if !(buf.contains('y')) && !buf.is_empty() {
         return Err(anyhow::anyhow!("Exiting.."));
     }
 
     DirBuilder::new().create(&project_name)?;
+    DirBuilder::new().create(&format!("{project_name}/include"))?;
 
     setup_makefile(&project_name)?;
     setup_header(&project_name)?;

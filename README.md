@@ -7,7 +7,7 @@ Get started in c with an makefile,header and simple project structure.
 1.Clone the repo
 
 ```bash
-git clone --depth 1 https://github.com/BayonetArch/setup_c.git
+git clone --depth 1 https://github.com/BayonetArch/cinit.git
 ```
 
 
@@ -20,6 +20,6 @@ cargo build --release
 3. run
 
 ```bash
-./target/release/setup_c <project_name>
+./target/release/cinit <project_name>
 ```
 

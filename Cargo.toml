@@ -1,5 +1,5 @@
 [package]
-name = "setup_c"
+name = "cinit"
 version = "0.1.0"
 edition = "2024"
 
